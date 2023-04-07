@@ -11,10 +11,11 @@ from flask import jsonify, abort
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
-def get_all_states():
+def get_states():
     """Retrieves the list of all State objects"""
-    states = [state.to_dict() for state in storage.all(State).values()]
-    return jsonify(states)
+    states = storage.all(State).values()
+    states_list = [state.to_dict() for state in states]
+    return jsonify(states_list)
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
@@ -22,7 +23,7 @@ def get_state(state_id):
     """Retrieves a State object"""
     state = storage.get(State, state_id)
     if state is None:
-        abort(404)
+        return jsonify({'error': 'Not found'}), 404
     return jsonify(state.to_dict())
 
 
